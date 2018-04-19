@@ -63,18 +63,32 @@
                                 <div class="col-md-12">
 
                                     <label class="m-t-40">Código Accion</label>
-                                    <input type="text" class="form-control" name="codigo" placeholder="Escriba Código Acción">
+                                    <input type="text" required class="form-control" name="codigo" placeholder="Escriba Código Acción">
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="m-t-20">Fecha Inicio</label>
-                                    <input type="text" class="form-control mdate" name = "fecha_inicio" >
+
+                                <div class="col-md-12">
+
+                                    <label class="m-t-40">Tipo Opción</label>
+
+                                    <select name="tipo" required class="form-control form-control-line">
+                                      <option name="compra"> Compra </option>
+                                      <option name="venta"> Venta </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="m-t-20">Fecha Compra Acción</label>
+                                    <input type="text" class="form-control mdate" required name = "fecha_compra" >
 
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="m-t-20">Fecha Fin</label>
-                                    <input type="text" class="form-control mdate" name = "fecha_fin" >
 
+                                <div class="col-md-12">
+
+                                    <label class="m-t-40">Porcentaje de Interés libre de riesgo</label>
+                                    <input type="number" class="form-control" name="tasa_interes" required pattern="[0-9]{1,3}" placeholder="Escriba porcentaje (de 1 a 100)">
                                 </div>
+
+
 
                                 {% csrf_token %}
 

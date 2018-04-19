@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from datetime import date
 
 from yahoo_quote_download import yqd
 
@@ -12,12 +13,18 @@ def index(request):
 
 def getdata(request):
     req = request.POST
-    fecha_inicio = ''.join(req.get("fecha_inicio").split('-'))
-    fecha_fin = ''.join(req.get("fecha_fin").split('-'))
+    fecha_inicio = "2018-01-01"
+    fecha_inicio = ''.join(fecha_inicio.split('-'))
+
+    today = str(date.today())
+    fecha_fin = ''.join(today.split('-'))
+
     codigo = req.get("codigo")
 
     yqd._cookie = None
     yqd._crumb = None
+
+    print (yqd._cookie)
 
     yqd._get_cookie_crumb()
 
