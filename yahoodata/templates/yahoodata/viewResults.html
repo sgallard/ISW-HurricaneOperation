@@ -50,14 +50,24 @@
             <!-- ============================================================== -->
             <!-- Start Page Content -->
             <!-- ============================================================== -->
+
             <div class="row">
                 <div class="col-12">
                     <!-- Card -->
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Resultados</h4>
-                            <h6 class="card-subtitle">Resultados de la accion: {{ accion}}</h6>
-
+                            <h2 class="card-title">Resultados</h2>
+                            <h4 class="card-title">El valor de la accion de {{accion}} a {{tipo}} para la fecha {{fecha}} será de aproximadamente: {{resultado}}</h4>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Datos Obtenidos</h4>
 
                             {% if historical_data %}
                             <div class="table-responsive">
