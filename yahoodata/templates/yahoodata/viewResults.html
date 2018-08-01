@@ -67,9 +67,9 @@
                     <!-- Card -->
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Datos Obtenidos</h4>
+                            <h4 class="card-title">Trayectorias Realizadas para {{accion}} </h4>
 
-                            {% if historical_data %}
+                            {% if data %}
                             <div class="table-responsive">
                                     <table class="table">
 
@@ -83,7 +83,7 @@
                                         </thead>
 
                                         <tbody>
-                                          {% for dato in historical_data%}
+                                          {% for dato in data%}
                                             <tr>
                                               {% for col in dato%}
                                                 <td>{{col}} </td>

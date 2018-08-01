@@ -49,12 +49,19 @@ def getdata(request):
     S = float(historical_data[-2][5])
     k = np.mean(adj)
     sigma = np.std(adj)
+
+    #M = req.get("numero_trayectorias")
+    M=1000
+    put = int(req.get("tipo") == "Compra")
+
     r=float(req.get("tasa_interes"))/100.
     print("S= ",S)
     print("k= ",k)
     print("Tm= ",Tm)
     print("r= ",r)
     print("sigma= ",sigma)
+    print("M= ",M)
+    print("put= ",put)
     r_f = robjects.r('''black_scholes <- function(S, k, Tm, r, sigma){
         values <- c(1)
         d1 <- (log(S/k) + (r+(sigma^2)/2)*(Tm))/(sigma*sqrt(Tm))
@@ -65,16 +72,54 @@ def getdata(request):
 
         values
     }''')
+
     res= r_f(S,k,Tm,r,sigma)
+
+    montecarlo = robjects.r('''montecarlo_black_scholes <- function(S, k, Tm, r,sigma, M,put){
+        cat(S)
+        values <- matrix(nrow=M,ncol=2)
+        var <- 0
+        I_0 <- 0
+        if(put == 1){
+            I_1 <- max( k - S*exp((r-(sigma^2)/2)*Tm + sigma*sqrt(Tm)*rnorm(1, 0, 1)),0)
+        }else{
+            I_1 <- max( -k + S*exp((r-(sigma^2)/2)*Tm + sigma*sqrt(Tm)*rnorm(1, 0, 1)),0)
+        }
+        
+
+        values[1,1] <- 1
+        values[1,2] <- I_1
+
+
+        
+        for(i in 2:M){
+            if(put == 1){
+                h_i <- max( k - S*exp((r-(sigma^2)/2)*Tm + sigma*sqrt(Tm)*rnorm(1, 0, 1)),0)
+            }else{
+                h_i <- max( -k + S*exp((r-(sigma^2)/2)*Tm + sigma*sqrt(Tm)*rnorm(1, 0, 1)),0)
+            }
+            I_1 <- I_1 + (h_i -  I_1)/(i+1)
+            values[i,1] <- i
+            values[i,2] <- I_1
+        } 
+
+        values
+    }''')
+
+    
+    print("y ahora",M)
+    montecarlo_res = montecarlo(S,k,Tm,r,sigma,M,put)
+    montecarlo_res = (np.asarray(montecarlo_res)).tolist()
+    print("Listo: ", montecarlo_res)
     compra=res[0]
     venta=res[1]
     
     if req.get("tipo")=="Compra":
-        context = {"historical_data": historical_data, "header_tabla": historical_data_raw[0].split(','),
+        context = {"data": montecarlo_res, "header_tabla": ["Iteracion", "Valor"],
         "accion": codigo, "resultado": compra,"tipo": "comprar", "fecha":req.get("fecha_compra")
         }
     else:
-        context = {"historical_data": historical_data, "header_tabla": historical_data_raw[0].split(','),
+        context = {"data": montecarlo_res, "header_tabla": ["Iteracion", "Valor"],
         "accion": codigo, "resultado": venta, "tipo": "vender", "fecha":req.get("fecha_compra")
         }
     return render(request,'yahoodata/viewResults.html',context)
