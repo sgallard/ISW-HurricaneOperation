@@ -53,6 +53,8 @@ def getdata(request):
 
     M = int(req.get("puntos"))
     #M=1000
+
+    n_trayectorias = int(req.get("trayectorias"))
     put = int(req.get("tipo") == "Compra")
 
     r=float(req.get("tasa_interes"))/100.
@@ -107,28 +109,44 @@ def getdata(request):
         values
     }''')
 
+    trayectorias = list()
+    valores_finales = list()
+
     
-    print("y ahora",M)
-    montecarlo_res = montecarlo(S,k,Tm,r,sigma,M,put)
-    montecarlo_res = (np.asarray(montecarlo_res))
-    montecarlo_res_x = montecarlo_res[:,0].tolist()
-    montecarlo_res_y = montecarlo_res[:,1].tolist()
+    for i in range(n_trayectorias):
+        montecarlo_res = montecarlo(S,k,Tm,r,sigma,M,put)
+        montecarlo_res = (np.asarray(montecarlo_res))
+        montecarlo_res_x = montecarlo_res[:,0].tolist()
+        montecarlo_res_y = montecarlo_res[:,1].tolist()
 
-    valor_final = float(montecarlo_res_y[-1])
+        valor_final = float(montecarlo_res_y[-1])
 
-    montecarlo_res_x = json.dumps(montecarlo_res_x)
-    montecarlo_res_y = json.dumps(montecarlo_res_y)
-    print("Listo: ", valor_final)
+        montecarlo_res_x = json.dumps(montecarlo_res_x)
+        montecarlo_res_y = json.dumps(montecarlo_res_y)
+
+        trayectorias.append(montecarlo_res_y)
+        valores_finales.append(valor_final)
+
+
+        print("Listo: ", valor_final)
+
     compra=res[0]
     venta=res[1]
+
+    trayectorias = json.dumps(trayectorias)
+    valores_finales = json.dumps(valores_finales)
+
+    
+
+
     
     if req.get("tipo")=="Compra":
-        context = {"data_x": montecarlo_res_x,"data_y": montecarlo_res_y, "cantidad_puntos": M,
+        context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M,
         "accion": codigo, "resultado": compra,"tipo": "comprar", "fecha":req.get("fecha_compra"),
         "valor_final_montecarlo": valor_final, "error": float(valor_final) - float(compra)
         }
     else:
-        context = {"data_x": montecarlo_res_x,"data_y": montecarlo_res_y, "cantidad_puntos": M,
+        context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M,
         "accion": codigo, "resultado": venta, "tipo": "vender", "fecha":req.get("fecha_compra"),
         "valor_final_montecarlo": valor_final, "error": float(valor_final) - float(compra)
         }
