@@ -32,7 +32,11 @@
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js' %}"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js' %}"></script>
+
+    
 <![endif]-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </head>
   <body>
     <div class="page-wrapper">
@@ -57,52 +61,86 @@
                     <div class="card">
                         <div class="card-body">
                             <h2 class="card-title">Resultados</h2>
-                            <h4 class="card-title">El valor de la accion de {{accion}} a {{tipo}} para la fecha {{fecha}} será de aproximadamente: {{resultado}}</h4>
+
                         </div>
                     </div> 
                 </div>
             </div>
             <div class="row">
-                <div class="col-12">
+                <div class="col-8">
                     <!-- Card -->
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Trayectorias Realizadas para {{accion}} </h4>
 
-                            {% if data %}
-                            <div class="table-responsive">
-                                    <table class="table">
+                            {% if data_x %}
+                            
 
-                                        <thead>
-                                            <tr>
-                                              {% for head_tabla in header_tabla %}
-                                                <th>{{ head_tabla}}</th>
+                            <div style="height: 100%; width: 100%">
+                                    <canvas id="myChart"></canvas>
+                            </div>
 
-                                              {%endfor%}
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                          {% for dato in data%}
-                                            <tr>
-                                              {% for col in dato%}
-                                                <td>{{col}} </td>
-                                              {%endfor%}
-
-                                            </tr>
-                                            {%endfor%}
-
-
-                                        </tbody>
-                                    </table>
-                                </div>
-
-
-                                {% else %}
-                                    <p>No se obtuvieron resultados.</p>
-                                {% endif %}
+                            {% else %}
+                                <p>No se obtuvieron resultados.</p>
+                            {% endif %}
                             </div>
                         </div>
+                    </div>
+
+                    <div class="col-4">
+                            <!-- Card -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Datos de Estimación</h4>
+        
+                                    {% if data_x %}
+                                    
+        
+                                    
+                                    
+                                            <div class="row form-material">
+                
+                                                   
+                
+                                                <div class="col-md-12">
+                
+                                                    <label class="m-t-40">Cantidad de Puntos</label>
+                                                    <input type="text" class="form-control" value="{{cantidad_puntos}}" readonly>
+                                                </div>
+                
+                                                <div class="col-md-12">
+                
+                                                        <label class="m-t-40">Cantidad de Trayectorias</label>
+                                                        <input class="form-control" type="text" value="1" readonly>
+                                                </div>
+                
+                                                <div class="col-md-12">
+                                                        <label class="m-t-40">Valor Final de la Opción</label>
+                                                        <input type="text" class="form-control" value="{{valor_final_montecarlo}}" readonly>
+                
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                        <label class="m-t-40">Valor Teórico</label>
+                                                        <input type="text" class="form-control" value="{{resultado}}" readonly>
+                
+                                                </div>
+                
+                                                <div class="col-md-12">
+                                                        <label class="m-t-40">Error</label>
+                                                        <input type="text" class="form-control" value="{{error}}" readonly>
+                                                </div>
+                
+                                                
+                
+                
+                
+                                               
+        
+                                    
+                                    {% endif %}
+                                    </div>
+                                </div>
                     </div>
 
 
@@ -158,97 +196,175 @@
     <!-- Date range Plugin JavaScript -->
     <script src="{% static 'assets/plugins/timepicker/bootstrap-timepicker.min.js' %}"></script>
     <script src="{% static 'assets/plugins/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
-    <script>
-    // MAterial Date picker
-    $('.mdate').bootstrapMaterialDatePicker({
-        weekStart: 0,
-        time: false
-    });
-    $('#timepicker').bootstrapMaterialDatePicker({
-        format: 'HH:mm',
-        time: true,
-        date: false
-    });
-    $('#date-format').bootstrapMaterialDatePicker({
-        format: 'dddd DD MMMM YYYY - HH:mm'
-    });
 
-    $('#min-date').bootstrapMaterialDatePicker({
-        format: 'DD/MM/YYYY HH:mm',
-        minDate: new Date()
-    });
-    // Clock pickers
-    $('#single-input').clockpicker({
-        placement: 'bottom',
-        align: 'left',
-        autoclose: true,
-        'default': 'now'
-    });
-    $('.clockpicker').clockpicker({
-        donetext: 'Done',
-    }).find('input').change(function() {
-        console.log(this.value);
-    });
-    $('#check-minutes').click(function(e) {
-        // Have to stop propagation here
-        e.stopPropagation();
-        input.clockpicker('show').clockpicker('toggleView', 'minutes');
-    });
-    if (/mobile/i.test(navigator.userAgent)) {
-        $('input').prop('readOnly', true);
-    }
-    // Colorpicker
-    $(".colorpicker").asColorPicker();
-    $(".complex-colorpicker").asColorPicker({
-        mode: 'complex'
-    });
-    $(".gradient-colorpicker").asColorPicker({
-        mode: 'gradient'
-    });
-    // Date Picker
-    jQuery('.mydatepicker, #datepicker').datepicker();
-    jQuery('#datepicker-autoclose').datepicker({
-        autoclose: true,
-        todayHighlight: true
-    });
-    jQuery('#date-range').datepicker({
-        toggleActive: true
-    });
-    jQuery('#datepicker-inline').datepicker({
-        todayHighlight: true
-    });
-    // Daterange picker
-    $('.input-daterange-datepicker').daterangepicker({
-        buttonClasses: ['btn', 'btn-sm'],
-        applyClass: 'btn-danger',
-        cancelClass: 'btn-inverse'
-    });
-    $('.input-daterange-timepicker').daterangepicker({
-        timePicker: true,
-        format: 'MM/DD/YYYY h:mm A',
-        timePickerIncrement: 30,
-        timePicker12Hour: true,
-        timePickerSeconds: false,
-        buttonClasses: ['btn', 'btn-sm'],
-        applyClass: 'btn-danger',
-        cancelClass: 'btn-inverse'
-    });
-    $('.input-limit-datepicker').daterangepicker({
-        format: 'MM/DD/YYYY',
-        minDate: '06/01/2015',
-        maxDate: '06/30/2015',
-        buttonClasses: ['btn', 'btn-sm'],
-        applyClass: 'btn-danger',
-        cancelClass: 'btn-inverse',
-        dateLimit: {
-            days: 6
+    
+    <script>
+
+
+        Chart.pluginService.register({
+		afterUpdate: function (chart) {
+			var xScale = chart.scales['x-axis-0'];
+			if (xScale.options.ticks.maxTicksLimit) {
+				// store the original maxTicksLimit
+				xScale.options.ticks._maxTicksLimit = xScale.options.ticks.maxTicksLimit;
+				// let chart.js draw the first and last label
+				xScale.options.ticks.maxTicksLimit = (xScale.ticks.length % xScale.options.ticks._maxTicksLimit === 0) ? 1 : 2;
+
+				var originalXScaleDraw = xScale.draw
+				xScale.draw = function () {
+					originalXScaleDraw.apply(this, arguments);
+
+					var xScale = chart.scales['x-axis-0'];
+					if (xScale.options.ticks.maxTicksLimit) {
+						var helpers = Chart.helpers;
+
+						var tickFontColor = helpers.getValueOrDefault(xScale.options.ticks.fontColor, Chart.defaults.global.defaultFontColor);
+						var tickFontSize = helpers.getValueOrDefault(xScale.options.ticks.fontSize, Chart.defaults.global.defaultFontSize);
+						var tickFontStyle = helpers.getValueOrDefault(xScale.options.ticks.fontStyle, Chart.defaults.global.defaultFontStyle);
+						var tickFontFamily = helpers.getValueOrDefault(xScale.options.ticks.fontFamily, Chart.defaults.global.defaultFontFamily);
+						var tickLabelFont = helpers.fontString(tickFontSize, tickFontStyle, tickFontFamily);
+						var tl = xScale.options.gridLines.tickMarkLength;
+
+						var isRotated = xScale.labelRotation !== 0;
+						var yTickStart = xScale.top;
+						var yTickEnd = xScale.top + tl;
+						var chartArea = chart.chartArea;
+
+						// use the saved ticks
+						var maxTicks = xScale.options.ticks._maxTicksLimit - 1;
+						var ticksPerVisibleTick = xScale.ticks.length / maxTicks;
+
+						// chart.js uses an integral skipRatio - this causes all the fractional ticks to be accounted for between the last 2 labels
+						// we use a fractional skipRatio
+						var ticksCovered = 0;
+						helpers.each(xScale.ticks, function (label, index) {
+							if (index < ticksCovered)
+								return;
+
+							ticksCovered += ticksPerVisibleTick;
+
+							// chart.js has already drawn these 2
+							if (index === 0 || index === (xScale.ticks.length - 1))
+								return;
+
+							// copy of chart.js code
+							var xLineValue = this.getPixelForTick(index);
+							var xLabelValue = this.getPixelForTick(index, this.options.gridLines.offsetGridLines);
+
+							if (this.options.gridLines.display) {
+								this.ctx.lineWidth = this.options.gridLines.lineWidth;
+								this.ctx.strokeStyle = this.options.gridLines.color;
+
+								xLineValue += helpers.aliasPixel(this.ctx.lineWidth);
+
+								// Draw the label area
+								this.ctx.beginPath();
+
+								if (this.options.gridLines.drawTicks) {
+									this.ctx.moveTo(xLineValue, yTickStart);
+									this.ctx.lineTo(xLineValue, yTickEnd);
+								}
+
+								// Draw the chart area
+								if (this.options.gridLines.drawOnChartArea) {
+									this.ctx.moveTo(xLineValue, chartArea.top);
+									this.ctx.lineTo(xLineValue, chartArea.bottom);
+								}
+
+								// Need to stroke in the loop because we are potentially changing line widths & colours
+								this.ctx.stroke();
+							}
+
+							if (this.options.ticks.display) {
+								this.ctx.save();
+								this.ctx.translate(xLabelValue + this.options.ticks.labelOffset, (isRotated) ? this.top + 12 : this.options.position === "top" ? this.bottom - tl : this.top + tl);
+								this.ctx.rotate(helpers.toRadians(this.labelRotation) * -1);
+								this.ctx.font = tickLabelFont;
+								this.ctx.textAlign = (isRotated) ? "right" : "center";
+								this.ctx.textBaseline = (isRotated) ? "middle" : this.options.position === "top" ? "bottom" : "top";
+								this.ctx.fillText(label, 0, 0);
+								this.ctx.restore();
+							}
+						}, xScale);
+					}
+				};
+			}
+		},
+	});
+    
+
+
+
+
+
+        // Our labels along the x-axis
+var data_x = {{data_x |safe}};
+// For drawing the lines
+
+var data_y = {{data_y |safe}}
+var africa = [86,114,106,106,107,111,133,221,783,2478];
+var asia = [282,350,411,502,635,809,947,1402,3700,5267];
+var europe = [168,170,178,190,203,276,408,547,675,734];
+var latinAmerica = [40,20,10,16,24,38,74,167,508,784];
+var northAmerica = [6,3,2,2,7,26,82,172,312,433];
+
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: data_x,
+    datasets: [
+      { 
+        data: data_y ,
+        label: "Trayectoria 1",
+        borderColor: "#3e95cd",
+        fill: false
+      },
+      /*{ 
+        data: asia,
+        label: "Asia",
+        borderColor: "#8e5ea2",
+        fill: false
+      },
+      { 
+        data: europe,
+        label: "Europe",
+        borderColor: "#3cba9f",
+        fill: false
+      },
+      { 
+        data: latinAmerica,
+        label: "Latin America",
+        borderColor: "#e8c3b9",
+        fill: false
+      },
+      { 
+        data: northAmerica,
+        label: "North America",
+        borderColor: "#c45850",
+        fill: false
+      }
+      */
+    ]
+  },
+  options: {
+        
+        tooltips: {
+          callback: function(tooltipItem) {
+            return tooltipItem.yLabel;
+          }
+        },
+        scales: {
+          xAxes: [{
+            ticks: {
+              maxTicksLimit: 20
+            }
+          }]
         }
+      }
     });
     </script>
-    <!-- ============================================================== -->
-    <!-- Style switcher -->
-    <!-- ============================================================== -->
-    <script src="{% static 'assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
+    
 
   </body>
 </html>

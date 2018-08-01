@@ -4,6 +4,7 @@ import rpy2
 import rpy2.robjects as robjects
 import numpy as np
 from yahoo_quote_download import yqd
+import json
 
 # Create your views here.
 
@@ -50,8 +51,8 @@ def getdata(request):
     k = np.mean(adj)
     sigma = np.std(adj)
 
-    #M = req.get("numero_trayectorias")
-    M=1000
+    M = int(req.get("puntos"))
+    #M=1000
     put = int(req.get("tipo") == "Compra")
 
     r=float(req.get("tasa_interes"))/100.
@@ -109,17 +110,26 @@ def getdata(request):
     
     print("y ahora",M)
     montecarlo_res = montecarlo(S,k,Tm,r,sigma,M,put)
-    montecarlo_res = (np.asarray(montecarlo_res)).tolist()
-    print("Listo: ", montecarlo_res)
+    montecarlo_res = (np.asarray(montecarlo_res))
+    montecarlo_res_x = montecarlo_res[:,0].tolist()
+    montecarlo_res_y = montecarlo_res[:,1].tolist()
+
+    valor_final = float(montecarlo_res_y[-1])
+
+    montecarlo_res_x = json.dumps(montecarlo_res_x)
+    montecarlo_res_y = json.dumps(montecarlo_res_y)
+    print("Listo: ", valor_final)
     compra=res[0]
     venta=res[1]
     
     if req.get("tipo")=="Compra":
-        context = {"data": montecarlo_res, "header_tabla": ["Iteracion", "Valor"],
-        "accion": codigo, "resultado": compra,"tipo": "comprar", "fecha":req.get("fecha_compra")
+        context = {"data_x": montecarlo_res_x,"data_y": montecarlo_res_y, "cantidad_puntos": M,
+        "accion": codigo, "resultado": compra,"tipo": "comprar", "fecha":req.get("fecha_compra"),
+        "valor_final_montecarlo": valor_final, "error": float(valor_final) - float(compra)
         }
     else:
-        context = {"data": montecarlo_res, "header_tabla": ["Iteracion", "Valor"],
-        "accion": codigo, "resultado": venta, "tipo": "vender", "fecha":req.get("fecha_compra")
+        context = {"data_x": montecarlo_res_x,"data_y": montecarlo_res_y, "cantidad_puntos": M,
+        "accion": codigo, "resultado": venta, "tipo": "vender", "fecha":req.get("fecha_compra"),
+        "valor_final_montecarlo": valor_final, "error": float(valor_final) - float(compra)
         }
     return render(request,'yahoodata/viewResults.html',context)

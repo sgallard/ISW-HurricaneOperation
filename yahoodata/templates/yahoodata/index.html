@@ -27,6 +27,9 @@
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <!-- You can change the theme colors from here -->
     <link href="{% static 'css/colors/default-dark.css' %}" id="theme" rel="stylesheet">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -55,10 +58,13 @@
                     <!-- Card -->
                     <div class="card">
                         <div class="card-body">
+                                
                             <h4 class="card-title">Elegir fechas y Accion</h4>
                             <h6 class="card-subtitle">Elija fechas y nombre de acción</h6>
                             <form action="{% url 'yahoodata:getData' %}" method="POST">
                             <div class="row form-material">
+
+                                   
 
                                 <div class="col-md-12">
 
@@ -88,12 +94,19 @@
                                     <input type="number" class="form-control" name="tasa_interes" required pattern="[0-9]{1,3}" placeholder="Escriba porcentaje (de 1 a 100)">
                                 </div>
 
+                                <div class="col-md-12">
+                                    <label class="m-t-40">Cantidad de Puntos por trayectoria</label>
+                                    <input type="number" class="form-control" name="puntos" required  placeholder="Escriba cantidad">
+                                </div>
+
 
 
                                 {% csrf_token %}
 
                                 <button class="btn btn-success" type="submit"> Enviar </button>
                               </form>
+
+                              
                             </div>
                         </div>
                     </div>
@@ -237,11 +250,12 @@
             days: 6
         }
     });
+
+
+
+
     </script>
-    <!-- ============================================================== -->
-    <!-- Style switcher -->
-    <!-- ============================================================== -->
-    <script src="{% static 'assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
+
 
   </body>
 </html>
