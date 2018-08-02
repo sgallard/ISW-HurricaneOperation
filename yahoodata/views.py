@@ -134,20 +134,22 @@ def getdata(request):
     venta=res[1]
 
     trayectorias = json.dumps(trayectorias)
-    valores_finales = json.dumps(valores_finales)
+    valores_finales = np.array(valores_finales)
 
     
 
 
     
     if req.get("tipo")=="Compra":
-        context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M,
+        context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M, "cantidad_trayectorias": n_trayectorias,
         "accion": codigo, "resultado": compra,"tipo": "comprar", "fecha":req.get("fecha_compra"),
-        "valor_final_montecarlo": valor_final, "error": float(valor_final) - float(compra)
+        "valor_final_montecarlo": np.mean(valores_finales), "error": np.mean(valores_finales) - float(compra),
+        "desviacion_valores_finales": np.std(valores_finales)
         }
     else:
-        context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M,
+        context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M,"cantidad_trayectorias": n_trayectorias,
         "accion": codigo, "resultado": venta, "tipo": "vender", "fecha":req.get("fecha_compra"),
-        "valor_final_montecarlo": valor_final, "error": float(valor_final) - float(compra)
+        "valor_final_montecarlo": np.mean(valores_finales), "error": np.mean(valores_finales) - float(venta),
+        "desviacion_valores_finales": np.std(valores_finales)
         }
     return render(request,'yahoodata/viewResults.html',context)

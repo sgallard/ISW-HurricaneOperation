@@ -62,6 +62,8 @@
                         <div class="card-body">
                             <h2 class="card-title">Resultados</h2>
 
+                            <button type="button" class="btn btn-success pull-right"  href="{% url 'index' %}"> Volver</button>
+
                         </div>
                     </div> 
                 </div>
@@ -99,6 +101,12 @@
                                     
                                     
                                             <div class="row form-material">
+
+                                                    <div class="col-md-12">
+                                                            <label class="m-t-40">Valor Teórico</label>
+                                                            <input type="text" class="form-control" value="{{resultado}}" readonly>
+                    
+                                                    </div>
                 
                                                    
                 
@@ -111,20 +119,22 @@
                                                 <div class="col-md-12">
                 
                                                         <label class="m-t-40">Cantidad de Trayectorias</label>
-                                                        <input class="form-control" type="text" value="1" readonly>
+                                                        <input class="form-control" type="text" value="{{cantidad_trayectorias}}" readonly>
                                                 </div>
                 
                                                 <div class="col-md-12">
-                                                        <label class="m-t-40">Valor Final de la Opción</label>
+                                                        <label class="m-t-40">Valor Estimado</label>
                                                         <input type="text" class="form-control" value="{{valor_final_montecarlo}}" readonly>
                 
                                                 </div>
 
                                                 <div class="col-md-12">
-                                                        <label class="m-t-40">Valor Teórico</label>
-                                                        <input type="text" class="form-control" value="{{resultado}}" readonly>
-                
+                                                    <label class="m-t-40">Desviación Estandar Trayectorias</label>
+                                                    <input type="text" class="form-control" value="{{desviacion_valores_finales}}" readonly>
+            
                                                 </div>
+
+                                                
                 
                                                 <div class="col-md-12">
                                                         <label class="m-t-40">Error</label>
