@@ -6,6 +6,12 @@ import numpy as np
 from yahoo_quote_download import yqd
 import json
 
+# quandl for financial data
+import quandl
+# pandas for data manipulation
+import pandas as pd
+quandl.ApiConfig.api_key = '-gzDw8tzAHNQZzxp8YXX'
+
 # Create your views here.
 
 from django.http import HttpResponse
@@ -24,30 +30,23 @@ def getdata(request):
 
     codigo = req.get("codigo")
 
-    yqd._cookie = None
-    yqd._crumb = None
-
-    print (yqd._cookie)
-
-    yqd._get_cookie_crumb()
-
-    historical_data_raw = yqd.load_yahoo_quote(codigo,fecha_inicio,fecha_fin)
-    historical_data = list()
-
-    for x in historical_data_raw[1::]:
-        historical_data.append(x.split(','))
-
-  
+    
+   
+    try:
+        historical_data_raw = quandl.get('WIKI/'+ codigo,  start_date=fecha_inicio, end_date=fecha_fin)
+        print(historical_data_raw)
+    except:
+        print("No Existe")
+        return render(request, 'yahoodata/index.html', {})
     adj = []
-    largo = len(historical_data)
-    for i in range(largo-1):
-        adj.append(historical_data[i][5])
+    adj = historical_data_raw['Adj. Close'].values.tolist()
+
     adj = [float(i) for i in adj]
     compra= datetime.strptime(req.get("fecha_compra"), '%Y-%m-%d').date()
     hoy=date.today()    
     Tm = compra - hoy
     Tm=Tm.days/365.
-    S = float(historical_data[-2][5])
+    S = adj[-1]
     k = np.mean(adj)
     sigma = np.std(adj)
 
