@@ -1,4 +1,8 @@
 from django.shortcuts import render
+from django.contrib import messages
+
+from django.http import HttpResponse, HttpResponseNotFound, Http404,  HttpResponseRedirect
+
 from datetime import date, datetime
 import rpy2
 import rpy2.robjects as robjects
@@ -22,11 +26,11 @@ def index(request):
 
 def getdata(request):
     req = request.POST
-    fecha_inicio = "2018-01-01"
-    fecha_inicio = ''.join(fecha_inicio.split('-'))
+    fecha_inicio = "2017-01-01"
+    
 
     today = str(date.today())
-    fecha_fin = ''.join(today.split('-'))
+    fecha_fin = '-'.join(today.split('-'))
 
     codigo = req.get("codigo")
 
@@ -37,7 +41,8 @@ def getdata(request):
         print(historical_data_raw)
     except:
         print("No Existe")
-        return render(request, 'yahoodata/index.html', {})
+        messages.warning(request, 'El código '+codigo+' no es un código válido. Intente nuevamente')
+        return HttpResponseRedirect("/")
     adj = []
     adj = historical_data_raw['Adj. Close'].values.tolist()
 

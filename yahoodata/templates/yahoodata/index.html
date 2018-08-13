@@ -57,7 +57,16 @@
                 <div class="col-12">
                     <!-- Card -->
                     <div class="card">
+                            
                         <div class="card-body">
+
+                                {% if messages %}
+                                <ul class="messages">
+                                    {% for message in messages %}
+                                    <li{% if message.tags %} class="alert alert-danger"{% endif %}>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
                                 
                             <h4 class="card-title">Elegir fechas y Accion</h4>
                             <h6 class="card-subtitle">Elija fechas y nombre de acción</h6>
