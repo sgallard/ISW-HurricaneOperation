@@ -9,8 +9,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href= "/static/assets/images/fondo_praderas.png">
-    <title>MathProject </title>
+    <link rel="icon" type="image/png" sizes="16x16" href= "/static/assets/images/stat_icon.png">
+    <title>MathProject</title>
     <!-- Bootstrap Core CSS -->
     <link href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css' %}" rel="stylesheet">
@@ -26,19 +26,112 @@
     <!-- Custom CSS -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <!-- You can change the theme colors from here -->
-    <link href="{% static 'css/colors/default-dark.css' %}" id="theme" rel="stylesheet">
+    <link href="{% static 'css/colors/blue.css' %}" id="theme" rel="stylesheet">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js' %}"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js' %}"></script>
-
-    
 <![endif]-->
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </head>
-  <body>
+  <body class="fix-header card-no-border">
+        <div class="preloader">
+                <svg class="circular" viewBox="25 25 50 50">
+                    <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+            </div>
+            <!-- ============================================================== -->
+            <!-- Main wrapper - style you can find in pages.scss -->
+            <!-- ============================================================== -->
+            <div id="main-wrapper">
+                <!-- ============================================================== -->
+                <!-- Topbar header - style you can find in pages.scss -->
+                <!-- ============================================================== -->
+                <header class="topbar">
+                    <nav class="navbar top-navbar navbar-expand-md navbar-light">
+                        <!-- ============================================================== -->
+                        <!-- Logo -->
+                        <!-- ============================================================== -->
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="#">
+                                <!-- Logo icon -->
+                                <b>
+                                    <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                                    <!-- Dark Logo icon -->
+                                    <img src="{% static 'assets/images/stat-icon.ico' %}" alt="homepage" width="80%" height="80%" class="dark-logo" />
+                                    <!-- Light Logo icon -->
+                                    <img src="{% static 'assets/images/stat-icon.ico' %}" alt="homepage" width="80%" height="80%" class="light-logo" />
+                                </b>
+                                <!--End Logo icon -->
+                                <!-- Logo text -->
+                                <span>
+                                 <!-- dark Logo text -->
+                                 ksajdasd
+                                 </span> </a>
+                        </div>
+                        <!-- ============================================================== -->
+                        <!-- End Logo -->
+                        <!-- ============================================================== -->
+                        <div class="navbar-collapse">
+                            <!-- ============================================================== -->
+                            <!-- toggle and nav items -->
+                            <!-- ============================================================== -->
+                            <ul class="navbar-nav mr-auto mt-md-0">
+                                <!-- This is  -->
+                                <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+                                <!-- ============================================================== -->
+        
+                            </ul>
+                            <!-- ============================================================== -->
+                            <!-- User profile and search -->
+                            <!-- ============================================================== -->
+                            <ul class="navbar-nav my-lg-0">
+                              
+                               
+                            </ul>
+                        </div>
+                    </nav>
+                </header>
+                <!-- ============================================================== -->
+                <!-- End Topbar header -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Left Sidebar - style you can find in sidebar.scss  -->
+                <!-- ============================================================== -->
+                <aside class="left-sidebar">
+                    <!-- Sidebar scroll-->
+                    
+                        <!-- End User profile text-->
+                        <!-- Sidebar navigation-->
+                        <nav class="sidebar-nav">
+                            <ul id="sidebarnav">
+                                <li class="nav-small-cap">Análisis</li>
+                                <li>
+                                    <a  href="{% url 'yahoodata:index' %}" ><i class="mdi mdi-amazon-clouddrive"></i><span class="hide-menu">Automático </span></a>
+                                    
+                                </li>
+                                <li> <a  href="{% url 'yahoodata:csv' %}"><i class="mdi mdi-book"></i><span class="hide-menu">Manual (CSV)</span></a>
+                                  
+                                </li>
+                                
+                                
+                            </ul>
+                        </nav>
+                        <!-- End Sidebar navigation -->
+                    </div>
+                    <!-- End Sidebar scroll-->
+                    <!-- Bottom points-->
+                    <div class="sidebar-footer">
+                       
+                    </div>
+                    <!-- End Bottom points-->
+                </aside>
+                <!-- ============================================================== -->
+                <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+                <!-- ============================================================== -->
+
     <div class="page-wrapper">
         <!-- ============================================================== -->
         <!-- Container fluid  -->
@@ -48,6 +141,43 @@
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
 
+            <div class="row page-titles">
+                    <div class="col-md-5 col-8 align-self-center">
+                        <h3 class="text-themecolor m-b-0 m-t-0">Resultados</h3>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'yahoodata:index' %}">Home</a></li>
+                            <li class="breadcrumb-item active">Resultados</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-7 col-4 align-self-center">
+                            <div class="d-flex m-t-10 justify-content-end">
+                                <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                                    <div class="chart-text m-r-10">
+                                        <h6 class="m-b-0"><small>Ultima Accion Consultada</small></h6>
+                                        <h4 class="m-t-0 text-info"><center>{{last_action}}</center></h4></div>
+                                   
+                                </div>
+                                <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                                    <div class="chart-text m-r-10">
+                                        <h6 class="m-b-0"><small>Precio Teórico</small></h6>
+                                        <h4 class="m-t-0 text-primary">${{precio_last_action}}</h4></div>
+                                    
+                                </div>
+    
+                                <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                                        <div class="chart-text m-r-10">
+                                            <h6 class="m-b-0"><small>Precio Estimado </small></h6>
+                                            <h4 class="m-t-0 text-primary">${{estimado_last_action}}</h4></div>
+                                        
+                                </div>
+                                
+                            </div>
+                        </div>
+                </div>
+
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
             <!-- ============================================================== -->
             <!-- End Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
@@ -55,18 +185,7 @@
             <!-- Start Page Content -->
             <!-- ============================================================== -->
 
-            <div class="row">
-                <div class="col-12">
-                    <!-- Card -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h2 class="card-title">Resultados</h2>
-
-                            <a  class="btn btn-success pull-right"  href="{% url 'yahoodata:index' %}"> Volver</a>
-                        </div>
-                    </div> 
-                </div>
-            </div>
+            
             <div class="row">
                 <div class="col-8">
                     <!-- Card -->

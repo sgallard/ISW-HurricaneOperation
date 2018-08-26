@@ -104,7 +104,7 @@
                     <!-- Sidebar scroll-->
                     <div class="scroll-sidebar">
                         <!-- User profile -->
-                        
+                       
                         <!-- End User profile text-->
                         <!-- Sidebar navigation-->
                         <nav class="sidebar-nav">
@@ -145,36 +145,36 @@
 
             <div class="row page-titles">
                     <div class="col-md-5 col-8 align-self-center">
-                        <h3 class="text-themecolor m-b-0 m-t-0">Análisis Automático</h3>
+                        <h3 class="text-themecolor m-b-0 m-t-0">Análisis Manual</h3>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{% url 'yahoodata:index' %}">Home</a></li>
-                            <li class="breadcrumb-item active">Análisis Automático</li>
+                            <li class="breadcrumb-item active">Análisis Manual</li>
                         </ol>
                     </div>
                     <div class="col-md-7 col-4 align-self-center">
-                        <div class="d-flex m-t-10 justify-content-end">
-                            <div class="d-flex m-r-20 m-l-10 hidden-md-down">
-                                <div class="chart-text m-r-10">
-                                    <h6 class="m-b-0"><small>Ultima Accion Consultada</small></h6>
-                                    <h4 class="m-t-0 text-info"><center>{{last_action}}</center></h4></div>
-                               
-                            </div>
-                            <div class="d-flex m-r-20 m-l-10 hidden-md-down">
-                                <div class="chart-text m-r-10">
-                                    <h6 class="m-b-0"><small>Precio Teórico</small></h6>
-                                    <h4 class="m-t-0 text-primary">${{precio_last_action}}</h4></div>
+                            <div class="d-flex m-t-10 justify-content-end">
+                                <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                                    <div class="chart-text m-r-10">
+                                        <h6 class="m-b-0"><small>Ultima Accion Consultada</small></h6>
+                                        <h4 class="m-t-0 text-info"><center>{{last_action}}</center></h4></div>
+                                   
+                                </div>
+                                <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                                    <div class="chart-text m-r-10">
+                                        <h6 class="m-b-0"><small>Precio Teórico</small></h6>
+                                        <h4 class="m-t-0 text-primary">${{precio_last_action}}</h4></div>
+                                    
+                                </div>
+    
+                                <div class="d-flex m-r-20 m-l-10 hidden-md-down">
+                                        <div class="chart-text m-r-10">
+                                            <h6 class="m-b-0"><small>Precio Estimado </small></h6>
+                                            <h4 class="m-t-0 text-primary">${{estimado_last_action}}</h4></div>
+                                        
+                                </div>
                                 
                             </div>
-
-                            <div class="d-flex m-r-20 m-l-10 hidden-md-down">
-                                    <div class="chart-text m-r-10">
-                                        <h6 class="m-b-0"><small>Precio Estimado </small></h6>
-                                        <h4 class="m-t-0 text-primary">${{estimado_last_action}}</h4></div>
-                                    
-                            </div>
-                            
                         </div>
-                    </div>
                 </div>
 
             <!-- ============================================================== -->
@@ -198,18 +198,27 @@
                                 </ul>
                                 {% endif %}
                                 
-                            <h4 class="card-title">Elegir Fecha Futura y Accion</h4>
-                            <h6 class="card-subtitle">Elija Fecha y nombre de Acción</h6>
-                            <form action="{% url 'yahoodata:getData' %}" method="POST">
+                            <h4 class="card-title">Elegir Fecha y Cargar Datos</h4>
+                            <h6 class="card-subtitle">Elija el archivo CSV descargado desde <a href="https://finance.yahoo.com/">Yahoo Finance</a></h6>
+                            <form action="{% url 'yahoodata:getData' %}" method="POST" enctype="multipart/form-data">
                             <div class="row form-material">
 
                                    
 
                                 <div class="col-md-12">
 
-                                    <label class="m-t-40">Código Accion</label>
-                                    <input type="text" required class="form-control" name="codigo" placeholder="Escriba Código Acción">
+                                    <label class="m-t-40">Nombre Accion</label>
+                                    <input type="text" required class="form-control" name="codigo" placeholder="Escriba Nombre Acción">
                                 </div>
+
+                                <div class="col-md-12">
+                                        <label class="m-t-40">Archivo CSV</label>
+                                        <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                            <div class="form-control" data-trigger="fileinput"> <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div> <span class="input-group-addon btn btn-default btn-file"> <span class="fileinput-new">Elegir Archivo</span> <span class="fileinput-exists">Cambiar</span>
+                                            <input type="hidden">
+                                            <input type="file" required name="csv"> </span> <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Quitar</a> </div>
+                                    </div>
+
 
                                 <div class="col-md-12">
 
@@ -230,22 +239,21 @@
                                 <div class="col-md-12">
 
                                     <label class="m-t-40">Porcentaje de Interés libre de riesgo</label>
-                                    <input type="number" class="form-control" name="tasa_interes" required min="0" pattern="[0-9]{1,3}" placeholder="Escriba porcentaje (de 1 a 100)">
+                                    <input type="number" class="form-control" name="tasa_interes" required pattern="[0-9]{1,3}" placeholder="Escriba porcentaje (de 1 a 100)">
                                 </div>
 
                                 <div class="col-md-12">
                                     <label class="m-t-40">Cantidad de Trayectorias</label>
-                                    <input type="number" class="form-control" name="trayectorias" required  min="1" placeholder="Escriba cantidad (No muy grande)">
+                                    <input type="number" class="form-control" name="trayectorias" required  placeholder="Escriba cantidad (No muy grande)">
                                 </div>
 
                                 <div class="col-md-12">
                                     <label class="m-t-40">Cantidad de Puntos por trayectoria</label>
-                                    <input type="number" class="form-control" name="puntos" required min="1" placeholder="Escriba cantidad">
+                                    <input type="number" class="form-control" name="puntos" required  placeholder="Escriba cantidad">
                                 </div>
 
 
-                                <input type="hidden"  name="automatico" required value="1">
-
+                                <input type="hidden"  name="automatico" required value="0">
                                 {% csrf_token %}
                                 <div class="col-md-12">
                                     <button class="btn btn-success" type="submit"> Enviar </button>
@@ -310,6 +318,8 @@
     <!-- Date range Plugin JavaScript -->
     <script src="{% static 'assets/plugins/timepicker/bootstrap-timepicker.min.js' %}"></script>
     <script src="{% static 'assets/plugins/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+
+    <script src="{% static 'js/jasny-bootstrap.js' %}"></script>
     <script>
     // MAterial Date picker
     $('.mdate').bootstrapMaterialDatePicker({
@@ -396,6 +406,22 @@
             days: 6
         }
     });
+
+
+
+    $(".inputFileVisible").click(function(){
+    $(this).siblings("input[type='file']").click();
+});
+$(".inputFileVisible").focus(function(){
+    $(this).siblings("input[type='file']").focus();
+});
+$(".inputFileHidden").change(function(){
+    if(this.files.length > 0){
+        $(this).siblings(".inputFileVisible").val(this.files[0].name);
+    }else{
+        $(this).siblings(".inputFileVisible").val("");
+    }
+});
 
 
 
