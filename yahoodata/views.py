@@ -1,4 +1,8 @@
 from django.shortcuts import render
+from django.contrib import messages
+
+from django.http import HttpResponse, HttpResponseNotFound, Http404,  HttpResponseRedirect
+
 from datetime import date, datetime
 import rpy2
 import rpy2.robjects as robjects
@@ -6,48 +10,74 @@ import numpy as np
 from yahoo_quote_download import yqd
 import json
 
+from django.utils import timezone
+
+# quandl for financial data
+import quandl
+# pandas for data manipulation
+import pandas as pd
+quandl.ApiConfig.api_key = '-gzDw8tzAHNQZzxp8YXX'
+
+
+from .models import Prediccion
+
+
+
 # Create your views here.
 
 from django.http import HttpResponse
 
 
 def index(request):
-    return render(request, 'yahoodata/index.html', {})
+    return render(request, 'yahoodata/index.html', {
+       "last_action": Prediccion.objects.latest('id').accion,
+        "precio_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_real),
+        "estimado_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_estimado)})
+
+def csv(request):
+    return render(request, 'yahoodata/csv.html', {
+        "last_action": Prediccion.objects.latest('id').accion,
+        "precio_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_real),
+        "estimado_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_estimado)
+        })
 
 def getdata(request):
     req = request.POST
-    fecha_inicio = "2018-01-01"
-    fecha_inicio = ''.join(fecha_inicio.split('-'))
+    fecha_inicio = "2017-01-01"
+    
 
     today = str(date.today())
-    fecha_fin = ''.join(today.split('-'))
+    fecha_fin = '-'.join(today.split('-'))
 
     codigo = req.get("codigo")
+    print(req)
+    
+    
+    if (req.get("automatico") == "0"):
+        print("manual")
+        csv = request.FILES['csv']
+        historical_data_raw = pd.read_csv(csv)
+        adj = []
+        adj = historical_data_raw['Adj Close'].values.tolist()
+    
+    else:
+        print("automatico")
+        try:
+            historical_data_raw = quandl.get('WIKI/'+ codigo,  start_date=fecha_inicio, end_date=fecha_fin)
+            adj = []
+            adj = historical_data_raw['Adj. Close'].values.tolist()
+        except:
+            print("No Existe")
+            messages.warning(request, 'El código '+codigo+' no es un código válido. Intente nuevamente')
+            return HttpResponseRedirect("/")
+    
 
-    yqd._cookie = None
-    yqd._crumb = None
-
-    print (yqd._cookie)
-
-    yqd._get_cookie_crumb()
-
-    historical_data_raw = yqd.load_yahoo_quote(codigo,fecha_inicio,fecha_fin)
-    historical_data = list()
-
-    for x in historical_data_raw[1::]:
-        historical_data.append(x.split(','))
-
-  
-    adj = []
-    largo = len(historical_data)
-    for i in range(largo-1):
-        adj.append(historical_data[i][5])
     adj = [float(i) for i in adj]
     compra= datetime.strptime(req.get("fecha_compra"), '%Y-%m-%d').date()
     hoy=date.today()    
     Tm = compra - hoy
     Tm=Tm.days/365.
-    S = float(historical_data[-2][5])
+    S = adj[-1]
     k = np.mean(adj)
     sigma = np.std(adj)
 
@@ -137,19 +167,37 @@ def getdata(request):
     valores_finales = np.array(valores_finales)
 
     
+    #guardar en bd
 
+    
 
     
     if req.get("tipo")=="Compra":
+
+        prediccion = Prediccion(accion=codigo, fecha=timezone.now(), precio_real=compra, precio_estimado=np.mean(valores_finales))
+        prediccion.save()
+
         context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M, "cantidad_trayectorias": n_trayectorias,
         "accion": codigo, "resultado": compra,"tipo": "comprar", "fecha":req.get("fecha_compra"),
         "valor_final_montecarlo": np.mean(valores_finales), "error": np.mean(valores_finales) - float(compra),
-        "desviacion_valores_finales": np.std(valores_finales)
+        "desviacion_valores_finales": np.std(valores_finales),
+
+       "last_action": Prediccion.objects.latest('id').accion,
+        "precio_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_real),
+        "estimado_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_estimado),
         }
     else:
+
+        prediccion = Prediccion(accion=codigo, fecha=timezone.now(), precio_real=venta, precio_estimado=np.mean(valores_finales))
+        prediccion.save()
+
         context = {"data_x": montecarlo_res_x,"data_y": trayectorias, "cantidad_puntos": M,"cantidad_trayectorias": n_trayectorias,
         "accion": codigo, "resultado": venta, "tipo": "vender", "fecha":req.get("fecha_compra"),
         "valor_final_montecarlo": np.mean(valores_finales), "error": np.mean(valores_finales) - float(venta),
-        "desviacion_valores_finales": np.std(valores_finales)
+        "desviacion_valores_finales": np.std(valores_finales),
+
+       "last_action": Prediccion.objects.latest('id').accion,
+        "precio_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_real),
+        "estimado_last_action": "{0:.2f}".format(Prediccion.objects.latest('id').precio_estimado),
         }
     return render(request,'yahoodata/viewResults.html',context)
